@@ -38,6 +38,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 @Configuration
 @EnableWebSecurity(/*debug = true*/)
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
