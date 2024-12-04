@@ -60,15 +60,14 @@ public class WebSecurityConfig {
                         //custom authorization manager
                         .requestMatchers("/user/**", "/admin/**", "/principal/**", "/authUser/**", "/change-password/**", "/home/**").access((authentication, object) -> {
                             // make request to Open Policy Agent
-                            if (authentication != null) {
-                                Authentication auth = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
-                                if (auth != null && auth.isAuthenticated()) {
-                                    LOGGER.info("OpenPolicyAgentAuthorizationManager {}", auth);
-                                    return new AuthorizationDecision(true);
-                                }
-                            }
-                            throw new AuthenticationCredentialsNotFoundException(
+                            Authentication auth = authentication.get();
+                            if (auth == null || !auth.isAuthenticated()) {
+                                throw new AuthenticationCredentialsNotFoundException(
                                     "An Authentication object was not found in the SecurityContext");
+                            }
+                            LOGGER.info("OpenPolicyAgentAuthorizationManager {}", auth);
+                            return new AuthorizationDecision(true);
+
                         })
                         //rest of all request requires to be authenticated
                         .anyRequest().authenticated())
